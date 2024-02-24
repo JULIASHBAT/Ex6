@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ex6 JQuery Table </title>
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      const cell = (value, isHead) => {
+        return $(isHead ? "<th/>" : "<td/>").addClass("border border-blue-300 p-2 text-wrap").text(value);
+      };
+      const row = (values, isHead) => {
+        return $("<tr/>").append(values.map((value) => cell(value, isHead)));
+      };
+      const createTable = (data, startIndex, endIndex) => {
+            const table = $('<table/>').addClass("border border-gray-300 w-full");
+            table.appendrow(["ID", "Title", "Description","Price", "Discount"], true);
+            data.forEach(asset => {
+                table.append(row([asset.id, asset.title, asset.description,asset.price,asset.discountPercentage,]));
+            });
+            return table;
+        }
+
+      const UpdateTable = () => {
+          const startIndex = (currentPage - 1) * productsPerPage;
+          const endIndex = startIndex + productsPerPage;
+          const productsToShow = data.products.slice(startIndex, endIndex);
+          $('#myTable').empty().append(createTable(productsToShow));
+      }
+  
+      $(document).ready(function () {
+            fetch(`${url}&skip=${skip}`,opt)
+                .then(response => response.json())
+                .then((responseData) => {
+                    data = responseData;
+                    UpdateTable();
+                });
+
+            $("#prev").click(() => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    skip -= productsPerPage;
+                    UpdateTable();
+                }
+            });
+
+            $("#next").click(() => {
+                const totalPages = Math.ceil(data.products.length / productsPerPage);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    skip += productsPerPage;
+                    UpdateTable();
+                }
+            });
+        });
+
+    </script>
+</head>
+<body>
+<div class="w-[1000px] mx-auto border border-gray-300 p-4 m-4">
+    <h1 class="text-2xl font-bold text-center">Ex6 JQuery Table</h1>
+    <div id="myTable"></div>
+    <div class="flex justify-between mt-4">
+        <button id="prev" class="bg-pink-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Previous
+        </button>
+        <button id="next" class="bg-pink-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Next
+        </button>
+    </div>
+</div>
+<script>
+  // custom config for the MTW app 
+  const mtwAppConfig = {
+      border: true // app border in the MTW page                    
+  }
+
+  ///////////////////////////////////////////////////////
+  // implement this functions in order to use private API        
+  const sendPrivateApiRequest = async () => {
+      // your code here:
+      // sendRequestToParent({ cat: 'getAssets' })
+  }        
+
+  const acceptPrivateApiResponse = async (data) => {
+      // process received data here:
+      // console.log(data)
+  }
+
+  // use this in order to send on document load
+  document.addEventListener('DOMContentLoaded', () => {
+      // your code here:
+      //sendRequestToParent({ method: 'getAssets' })
+  })
+
+</script>
+<script src="https://morethanwallet.com/appstore/index.js"></script>
+</body>
+</html>
